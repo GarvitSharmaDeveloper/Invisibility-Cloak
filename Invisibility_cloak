@@ -1,0 +1,30 @@
+import cv2
+import numpy as np
+widthStream=1920
+heightStream=1080
+ = cv2.VideoCapture(0,cv2.CAP_DSHOW)
+streamID=0
+while True:
+    ret,=.read()
+    if not ret:
+       break
+    =cv2.flip(,1)
+    =cv2.resize(,(widthStream,heightStream))
+    HSV=cv2.cvtColor(,cv2.COLOR_BGR2HSV)
+    LowerG=np.array([0,120,70])
+    UpperG=np.array([10,255,255])
+    binary=cv2.inRange(HSV,LowerG,UpperG)
+    binary=cv2.bitwise_not(binary)
+    video_framed_masked=cv2.bitwise_and(,,mask=binary)
+    if streamID==60:
+       Sample=.copy()
+    elif streamID>60:
+       Sample_mask=cv2.bitwise_not(binary)
+       Sample_masked=cv2.bitwise_and(Sample,Sample,mask=Sample_mask)
+       cloak=cv2.bitwise_or(video_framed_masked,Sample_masked)
+       cv2.imshow("Invisibilty Cloak",cloak)
+    streamID+=1
+    if cv2.waitKey(1)& 0xFF == ord("s"):
+       break
+.release()   
+cv2.destroyAllWindows()         
